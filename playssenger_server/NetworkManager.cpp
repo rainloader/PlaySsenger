@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <netinet/in.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -62,12 +63,13 @@ bool NetworkManager::Initialize()
 	epollEvent.data.fd = m_serverFd;
 
 	// register server fd to epoll
-	epoll_ctl(m_epollFd, EPOLL_CTL_ADD, m_serverFd, &epollEvent);
+	if(epoll_ctl(m_epollFd, EPOLL_CTL_ADD, m_serverFd, &epollEvent) < 0)
+	{
+		fprintf(stderr, "[ERROR] : EPOLL CTL ERROR\n");
+		exit(-1);
+	}
 
 	printf("epoll Create Success\n");
-
-
-
 
 	return true;
 }
@@ -78,8 +80,7 @@ void NetworkManager::Run()
 	int numOfEvent, n;
 	for(;;)
 	{
-		numOfEvent = epoll_wait(m_epollFd, m_epollEvents, 100, 1000);
-		printf("???");
+		numOfEvent = epoll_wait(m_epollFd, m_epollEvents, 100, 2000);
 
 		if(numOfEvent < 0){	
 			// critical error
@@ -89,10 +90,9 @@ void NetworkManager::Run()
 		
 		if(numOfEvent == 0)
 		{
-			/**/printf("Nothing happended\n");
 			continue;
 		}
-	
+		
 		OnEvent(numOfEvent);
 	}
 	close(m_serverFd);
@@ -118,17 +118,30 @@ void NetworkManager::OnEvent(int numOfEvent)
 				fprintf(stderr, "[ERROR] : ACCEPT ERROR\n");
 				exit(-1);
 			}
+			// make socket non-blocking
+			int flags = fcntl(clientFd, F_GETFL, 0);
+			if(flags < 0)
+			{
+				fprintf(stderr, "[ERROR] : MAKE SOCKET NONBLOCKING ERROR\n");
+				exit(-1);
+			}
+			flags = fcntl(clientFd, F_SETFL, flags | O_NONBLOCK);
 
 			Session session (clientFd, clientAddr);
+			session.SetState(SS_CONNECTED);
 			m_sessionMap.insert(std::pair<int, Session>(clientFd, session));
 
 			struct epoll_event epollEvent;
 
-			epollEvent.events = EPOLLIN | EPOLLOUT | EPOLLERR;
+			epollEvent.events = EPOLLIN | EPOLLERR; //| EPOLLOUT | EPOLLERR;
 			epollEvent.data.fd = clientFd;
 
 			// register server fd to epoll
-			epoll_ctl(m_epollFd, EPOLL_CTL_ADD, clientFd, &epollEvent);
+			if(epoll_ctl(m_epollFd, EPOLL_CTL_ADD, clientFd, &epollEvent) < 0)
+			{
+				fprintf(stderr, "[ERROR] : EPOLL CTL ERROR\n");
+				exit(-1);
+			}
 
 			printf("%d session connected\n", clientFd);
 		}
@@ -139,43 +152,37 @@ void NetworkManager::OnEvent(int numOfEvent)
 			{
 				epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_epollEvents[i].data.fd, NULL); // remove client info from epoll instance
 				int clientFd = m_epollEvents[i].data.fd;
-				close(clientFd); // disconnect
+				close(clientFd); // disconnecd
 				m_sessionMap.erase(clientFd);
 				printf("%d session disconnected\n", clientFd);
+			}
+			else if(strLen < 0)
+			{
 			}
 			else
 			{
 				int clientFd = m_epollEvents[i].data.fd;
-				switch (m_epollEvents[i].events)
+				__uint32_t events = m_epollEvents[i].events;
+				if(events & EPOLLIN)
 				{
-					case EPOLLIN:
-						printf("Client read.\n");
-						break;
-					case EPOLLOUT:
-						printf("Client wrote.\n");
-						char buffer[100];
-						read(clientFd, buffer, 100);
-						printf("%s\n", buffer);
-						break;
-					case EPOLLERR:
-						fprintf(stderr, "[ERROR] : EPOLL EVENT ERROR\n");
-						exit(-1);
-						break;
-					default:
-						fprintf(stderr, "[ERROR] : Irregular event\n");
-						fprintf(stderr, "event invoker and type : %d %d\n", clientFd, m_epollEvents[i].events);
-						//exit(-1);
-						break;
+					printf("EPOLLIN\n");
+					
 				}
+				if(events & EPOLLOUT)
+				{
+					printf("EPOLLOUT\n");
+				}
+				if(events & EPOLLERR)
+				{
+					fprintf(stderr, "[ERROR] : EPOLL EVENT ERROR\n");
+					exit(-1);				
+				}
+				buffer[strLen] = '\0';
+				printf("%s\n", buffer);
+
 				// service that someelse
 			}
 		}
 	}
-}
-
-bool NetworkManager::Connect()
-{
-
-	return true;
 }
 

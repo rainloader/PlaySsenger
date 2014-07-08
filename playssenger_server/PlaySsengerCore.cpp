@@ -1,4 +1,7 @@
 #include "PlaySsengerCore.h"
+#include <pthread.h>
+#include <stdio.h>
+#include <unistd.h>
 
 //-----------------------------------------------------
 // initialize static variable
@@ -16,12 +19,46 @@ bool PlaySsengerCore::Initialize()
 {
 	m_pNetworkManager = new NetworkManager();
 	m_pNetworkManager->Initialize();
+//	pthread_create(m_threadList[0], NULL, m_pNetworkManager->Run(), NULL);
 	return true;
 }
 
 void PlaySsengerCore::Run()
 {
-	m_pNetworkManager->Run();
+	pthread_t t1, t2, t3, t4;
+	pthread_create(&t1, NULL, &PlaySsengerCore::RunNetworkThread, this->m_pNetworkManager);
+	pthread_create(&t2, NULL, &PlaySsengerCore::RunNetworkThread, this->m_pNetworkManager);
+	pthread_create(&t3, NULL, &PlaySsengerCore::RunLogicThread, this);
+	pthread_create(&t4, NULL, &PlaySsengerCore::RunLogicThread, this);
+	
+	for(;;)
+	{
+		sleep(1);
+	}
+//	std::thread t1(&PlaySsengerCore::RunNetworkThread, this);
+//	std::thread t2(&PlaySsengerCore::RunNetworkThread, this);
+//	t1.join();
+//	t2.join();
+}
+
+void PlaySsengerCore::MainLogic()
+{
+	for(;;)
+	{
+		sleep(1);
+	}
+}
+
+void* PlaySsengerCore::RunNetworkThread(void *context)
+{
+	((NetworkManager*)context)->Run();
+	return 0;
+}
+
+void* PlaySsengerCore::RunLogicThread(void *context)
+{
+	((PlaySsengerCore*)context)->MainLogic();
+	return 0;
 }
 
 void PlaySsengerCore::CleanUp()

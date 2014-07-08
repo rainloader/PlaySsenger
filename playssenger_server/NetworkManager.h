@@ -4,6 +4,9 @@
 #include <sys/epoll.h>
 #include <map>
 
+#ifndef _NETWORKMANAGER_H
+#define _NETWORKMANAGER_H
+
 class NetworkManager
 {
 public:
@@ -17,6 +20,7 @@ private:
 	int m_serverFd;
 	int m_epollFd;
 	epoll_event m_epollEvents[MAX_EVENT_NUM];
-	bool Connect();
 	std::map<int, Session> m_sessionMap;
 };
+
+#endif

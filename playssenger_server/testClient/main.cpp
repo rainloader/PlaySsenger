@@ -4,7 +4,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <strings.h>
+#include <cstring>
 
 int main()
 {
@@ -27,10 +27,27 @@ int main()
 		return -1;
 	}
 	printf("connected\n");
+	
+	int result = 0;
+	char strBuffer[1024];
+	for(;;)
+	{
+		bzero(strBuffer, 1024);
+		scanf("%s", strBuffer);
+		int len = strlen(strBuffer);
+		if((result = write(clientSocket, strBuffer, len)) < 0)
+		{
+			fprintf(stderr, "[ERROR] : WRITE ERROR\n");
+		}
+		else
+	{
+		printf("%d sended!\n", result);
+	}
+	
+	}
+	getchar();
 
 	char* buffer = "I`m sending message!\n";
-	int result = 0;
-
 	if((result = write(clientSocket, buffer, 21)) < 0)
 	{
 		fprintf(stderr, "[ERROR] : WRITE ERROR\n");
