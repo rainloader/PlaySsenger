@@ -55,8 +55,10 @@ int main()
 	else
 	{
 		printf("%d sended!\n", result);
-	}
+	}	
+
 	getchar();
+
 	if(close(clientSocket) < 0)
 	{
 		fprintf(stderr, "[ERROR] : CLOSE ERROR\n");

@@ -1,8 +1,8 @@
-#include <sys/socket.h>
-#include <netinet/in.h>
-
 #ifndef _SESSION_H
 #define _SESSION_H
+
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 enum SessionState
 {

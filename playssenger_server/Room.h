@@ -1,8 +1,8 @@
-#include "Member.h"
-#include <vector>
-
 #ifndef _ROOM_H
 #define _ROOM_H
+
+#include "Member.h"
+#include <vector>
 
 class Room
 {

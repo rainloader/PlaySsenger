@@ -2,6 +2,7 @@
 
 Room::Room()
 {
+	
 }
 
 int Room::EnterMember(Member member)

@@ -18,7 +18,6 @@ NetworkManager::NetworkManager() : m_serverFd(0), m_epollFd(0)
 
 NetworkManager::~NetworkManager()
 {
-
 }
 
 bool NetworkManager::Initialize()

@@ -19,7 +19,6 @@ bool PlaySsengerCore::Initialize()
 {
 	m_pNetworkManager = new NetworkManager();
 	m_pNetworkManager->Initialize();
-//	pthread_create(m_threadList[0], NULL, m_pNetworkManager->Run(), NULL);
 	return true;
 }
 

@@ -5,7 +5,6 @@
 
 class PublicChatRoom : public Room
 {
-	
 };
 
 #endif

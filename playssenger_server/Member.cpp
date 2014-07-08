@@ -3,6 +3,7 @@
 Member::Member(Session session)
 : m_session(session)
 {
+
 }
 
 Session Member::GetSession()

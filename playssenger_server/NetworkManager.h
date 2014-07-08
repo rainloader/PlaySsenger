@@ -1,11 +1,11 @@
+#ifndef _NETWORKMANAGER_H
+#define _NETWORKMANAGER_H
+
 #define MAX_EVENT_NUM 500
 
 #include "Session.h"
 #include <sys/epoll.h>
 #include <map>
-
-#ifndef _NETWORKMANAGER_H
-#define _NETWORKMANAGER_H
 
 class NetworkManager
 {

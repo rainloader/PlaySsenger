@@ -1,9 +1,9 @@
+#ifndef _PLAYSSENGERCORE_H
+#define _PLAYSSENGERCORE_H
+
 #include "NetworkManager.h"
 #include "Room.h"
 #include <vector>
-
-#ifndef _PLAYSSENGERCORE_H
-#define _PLAYSSENGERCORE_H
 
 class PlaySsengerCore
 {
