@@ -12,6 +12,9 @@
 #include <errno.h>
 
 #define PORT_NUM 7554
+
+//std::atomic<int> _g_nThreadCounter = 0;
+//int g_nt = 0;
 NetworkManager::NetworkManager() : m_serverFd(0), m_epollFd(0)
 {
 }
@@ -75,6 +78,8 @@ bool NetworkManager::Initialize()
 
 void NetworkManager::Run()
 {
+	//__sync_fetch_and_add(&g_nt, 1);
+	//int TC = _g_nThreadCounter.fetch_add(std::memory_order_relaxed);
 	struct epoll_event events[100];
 	int numOfEvent, n;
 	for(;;)
@@ -92,6 +97,7 @@ void NetworkManager::Run()
 			continue;
 		}
 		
+		//printf("NT %d activated\n", TC);
 		OnEvent(numOfEvent);
 	}
 	close(m_serverFd);

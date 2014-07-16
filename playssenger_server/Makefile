@@ -3,11 +3,11 @@ SRCS = $(shell ls *.cpp)
 OBJS = $(SRCS:.cpp=.o) 
 
 $(TARGET) : $(OBJS) 
-	g++ -lm -lpthread -o $@ $(OBJS)
+	g++ -lm -std=c++0x -lpthread -o $@ $(OBJS)
 	make clean
 
 .cpp.o:
-	g++ -c -std=gnu++0x -lpthread $(SRCS)
+	g++ -c -std=c++0x -lpthread $(SRCS)
 
 
 clean:

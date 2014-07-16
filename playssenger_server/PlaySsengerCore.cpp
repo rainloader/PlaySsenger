@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+/**/int G_TC = 0;
 //-----------------------------------------------------
 // initialize static variable
 PlaySsengerCore* PlaySsengerCore::m_instance = 0;
@@ -42,9 +43,11 @@ void PlaySsengerCore::Run()
 
 void PlaySsengerCore::MainLogic()
 {
+	/**/ int TC = G_TC++;
 	for(;;)
 	{
 		sleep(1);
+		/**/printf("ML thread %d\n", TC);
 	}
 }
 
