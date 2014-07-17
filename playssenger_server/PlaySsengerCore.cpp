@@ -3,10 +3,14 @@
 #include <stdio.h>
 #include <unistd.h>
 
-/**/int G_TC = 0;
+#include "SpinLock.h"
+
+int g_threadCount = 0;
+SpinLock g_threadCountLock = SpinLock();
 //-----------------------------------------------------
 // initialize static variable
 PlaySsengerCore* PlaySsengerCore::m_instance = 0;
+	
 PlaySsengerCore* PlaySsengerCore::GetInstance()
 {
 	if(!m_instance)
@@ -43,11 +47,14 @@ void PlaySsengerCore::Run()
 
 void PlaySsengerCore::MainLogic()
 {
-	/**/ int TC = G_TC++;
+	int threadId;
+	g_threadCountLock.Lock();
+	threadId = ++g_threadCount;
+	g_threadCountLock.Unlock();
 	for(;;)
 	{
 		sleep(1);
-		/**/printf("ML thread %d\n", TC);
+		/**/printf("ML thread %d\n", threadId);
 	}
 }
 
