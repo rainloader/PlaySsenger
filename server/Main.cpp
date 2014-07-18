@@ -9,7 +9,7 @@ int main()
 	{
 		pCore->Run();
 	}
-	
+	 	
 	pCore->CleanUp();
 
 	std::cout << "PlaySsenger Terminated." << std::endl;
