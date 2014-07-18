@@ -19,10 +19,15 @@ SpinLock g_networkThreadCountLock = SpinLock();
 
 NetworkManager::NetworkManager() : m_serverFd(0), m_epollFd(0)
 {
+	
 }
 
 NetworkManager::~NetworkManager()
 {
+	for(int i=0; i<NETWORK_THREAD_NUM; i++)
+	{
+		delete m_epollEvent2DList[i];
+	}
 }
 
 bool NetworkManager::Initialize()
@@ -72,6 +77,31 @@ bool NetworkManager::Initialize()
 		fprintf(stderr, "[ERROR] : EPOLL CTL ERROR\n");
 		exit(-1);
 	}
+/*
+	for(int i=0; i<NETWORK_THREAD_NUM; i++)
+	{
+		// Prepare epoll process
+		if((m_epollFdList[i] = epoll_create(1)) < 0)
+		{
+			fprintf(stderr, "[ERROR] : EPOLL CREATE ERROR\n");
+		}
+
+		m_epollEvent2DList[i] = new epoll_event[MAX_EVENT_NUM];
+		
+		printf("epoll Create Success\n");
+	}
+
+	struct epoll_event epollEvent;
+
+	epollEvent.events = EPOLLIN | EPOLLOUT | EPOLLERR;
+	epollEvent.data.fd = m_serverFd;
+
+	// register server fd to epoll
+	if(epoll_ctl(m_epollFdList[m_serverFd%NETWORK_THREAD_NUM], EPOLL_CTL_ADD, m_serverFd, &epollEvent) < 0)
+	{
+		fprintf(stderr, "[ERROR] : EPOLL CTL ERROR\n");
+		exit(-1);
+	}*/
 
 	printf("epoll Create Success\n");
 
