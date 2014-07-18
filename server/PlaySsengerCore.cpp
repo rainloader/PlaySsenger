@@ -29,11 +29,12 @@ bool PlaySsengerCore::Initialize()
 
 void PlaySsengerCore::Run()
 {
-	pthread_t t1, t2, t3, t4;
-	pthread_create(&t1, NULL, &PlaySsengerCore::RunNetworkThread, this->m_pNetworkManager);
-	pthread_create(&t2, NULL, &PlaySsengerCore::RunNetworkThread, this->m_pNetworkManager);
-	pthread_create(&t3, NULL, &PlaySsengerCore::RunLogicThread, this);
-	pthread_create(&t4, NULL, &PlaySsengerCore::RunLogicThread, this);
+	pthread_t networkThreadList[MAX_EVENT_NUM];
+	pthread_t logicThreadList[2];
+	for(int i=0; i<NETWORK_THREAD_NUM; i++)
+		pthread_create(&networkThreadList[i], NULL, &PlaySsengerCore::RunNetworkThread, this->m_pNetworkManager);
+	for(int i=0; i<2; i++)
+		pthread_create(&logicThreadList[i], NULL, &PlaySsengerCore::RunLogicThread, this);
 	
 	for(;;)
 	{

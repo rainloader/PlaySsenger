@@ -1,4 +1,5 @@
 #include "NetworkManager.h"
+#include "SpinLock.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
@@ -13,8 +14,9 @@
 
 #define PORT_NUM 7554
 
-//std::atomic<int> _g_nThreadCounter = 0;
-//int g_nt = 0;
+int g_networkThreadCount = 0;
+SpinLock g_networkThreadCountLock = SpinLock();
+
 NetworkManager::NetworkManager() : m_serverFd(0), m_epollFd(0)
 {
 }
@@ -78,14 +80,19 @@ bool NetworkManager::Initialize()
 
 void NetworkManager::Run()
 {
-	//__sync_fetch_and_add(&g_nt, 1);
-	//int TC = _g_nThreadCounter.fetch_add(std::memory_order_relaxed);
+	int threadId;
 	struct epoll_event events[100];
 	int numOfEvent, n;
+
+	g_networkThreadCountLock.Lock();
+	threadId = g_networkThreadCount++;
+	g_networkThreadCountLock.Unlock();
+
 	for(;;)
 	{
 		numOfEvent = epoll_wait(m_epollFd, m_epollEvents, 100, 2000);
 
+		printf("NW thread %d\n", threadId);
 		if(numOfEvent < 0){	
 			// critical error
 			fprintf(stderr, "[ERROR] epoll_wait() ERROR : %s\n", strerror(errno));
@@ -133,7 +140,7 @@ void NetworkManager::OnEvent(int numOfEvent)
 			flags = fcntl(clientFd, F_SETFL, flags | O_NONBLOCK);
 
 			Session session (clientFd, clientAddr);
-			session.SetState(SS_CONNECTED);
+			session.state = SS_CONNECTED;
 			m_sessionMap.insert(std::pair<int, Session>(clientFd, session));
 
 			struct epoll_event epollEvent;
@@ -191,3 +198,7 @@ void NetworkManager::OnEvent(int numOfEvent)
 	}
 }
 
+void NetworkManager::OnRead()
+{
+	
+}
