@@ -3,9 +3,9 @@
 
 int main()
 {
-	PlaySsengerCore* pCore = PlaySsengerCore::GetInstance(); 
+	PlaySsengerCore* pCore = PlaySsengerCore::GetInstance();
 
-	if( pCore->Initialize() )
+	if(pCore->Initialize())
 	{
 		pCore->Run();
 	}
@@ -14,3 +14,4 @@ int main()
 
 	std::cout << "PlaySsenger Terminated." << std::endl;
 	return 0;
+}
