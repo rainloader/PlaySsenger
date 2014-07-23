@@ -130,7 +130,8 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 	char buffer[1024];
 	for(int i=0; i<numOfEvent; i++)
 	{
-		if(m_epollEvent2DList[threadId][i].data.fd == m_serverFd) // when clients attempt to connect
+		int eventFd = m_epollEvent2DList[threadId][i].data.fd;
+		if(eventFd == m_serverFd) // when clients attempt to connect
 		{
 			// accept client
 			// register new client socket to epoll instance
@@ -152,9 +153,9 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 			}
 			flags = fcntl(clientFd, F_SETFL, flags | O_NONBLOCK);
 
-			Session session (clientFd, clientAddr);
-			session.state = SS_CONNECTED;
-			m_sessionMap.insert(std::pair<int, Session>(clientFd, session));
+			Session* pSession = new Session(clientFd, clientAddr);
+			pSession->state = SS_CONNECTED;
+			m_pSessionMap.insert(std::pair<int, Session*>(clientFd, pSession));
 
 			struct epoll_event epollEvent;
 
@@ -172,26 +173,25 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 		}
 		else	// when client request service
 		{
-			strLen = read(m_epollEvent2DList[threadId][i].data.fd, buffer, 1024); // Read client request
+			Session* pSession = m_pSessionMap[eventFd];
+			strLen = read(eventFd, pSession->buffer, MAX_BUFFER_LENGTH); // Read client request
 			if(strLen == 0)	// Client request to disconnect
 			{
 				epoll_ctl(m_epollFdList[threadId], EPOLL_CTL_DEL, m_epollEvent2DList[threadId][i].data.fd, NULL); // remove client info from epoll instance
-				int clientFd = m_epollEvent2DList[threadId][i].data.fd;
-				close(clientFd); // disconnecd
-				m_sessionMap.erase(clientFd);
-				printf("%d session disconnected\n", clientFd);
+				close(eventFd); // disconnecd
+				delete pSession;
+				m_pSessionMap.erase(eventFd);
+				printf("%d session disconnected\n", eventFd);
 			}
 			else if(strLen < 0)
 			{
 			}
 			else
 			{
-				int clientFd = m_epollEvent2DList[threadId][i].data.fd;
 				__uint32_t events = m_epollEvent2DList[threadId][i].events;
 				if(events & EPOLLIN)
 				{
-					printf("EPOLLIN\n");
-					
+//					OnRead(int id, int strLen);
 				}
 				if(events & EPOLLOUT)
 				{
@@ -202,8 +202,8 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 					fprintf(stderr, "[ERROR] : EPOLL EVENT ERROR\n");
 					exit(-1);				
 				}
-				buffer[strLen] = '\0';
-				printf("%s\n", buffer);
+				pSession->buffer[strLen] = '\0';
+				printf("%s\n", pSession->buffer);
 
 				// service that someelse
 			}

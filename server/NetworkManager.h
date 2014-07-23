@@ -22,7 +22,7 @@ private:
 	int m_serverFd;
 	int m_epollFdList[NETWORK_THREAD_NUM];
 	epoll_event* m_epollEvent2DList[NETWORK_THREAD_NUM];
-	std::map<int, Session> m_sessionMap;
+	std::map<int, Session*> m_pSessionMap;
 };
 
 #endif
