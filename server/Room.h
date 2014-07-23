@@ -2,15 +2,20 @@
 #define _ROOM_H
 
 #include "Member.h"
-#include <vector>
+#include <map>
 
 class Room
 {
 public:
-	Room();
+	Room(int id, std::string name);
 	int EnterMember(Member member);
+	void SendMember(int memberId);
+	void ChangeRoomsName(std::string roomName);
+	
 protected:
-	std::vector<Member> m_memberList;
+	int m_id;
+	std::string m_name;
+	std::map<int, Member> m_memberMap;
 };
 
 #endif
