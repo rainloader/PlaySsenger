@@ -17,7 +17,7 @@
 int g_networkThreadCount = 0;
 SpinLock g_networkThreadCountLock = SpinLock();
 
-NetworkManager::NetworkManager() : m_serverFd(0), m_epollFd(0)
+NetworkManager::NetworkManager() : m_serverFd(0)
 {
 	
 }
@@ -60,24 +60,8 @@ bool NetworkManager::Initialize()
 
 	printf("Socket Init Success\n");
 
-	// Prepare epoll process
-	if((m_epollFd = epoll_create(1)) < 0)
-	{
-		fprintf(stderr, "[ERROR] : EPOLL CREATE ERROR\n");
-	}
 
-	struct epoll_event epollEvent;
 
-	epollEvent.events = EPOLLIN | EPOLLOUT | EPOLLERR;
-	epollEvent.data.fd = m_serverFd;
-
-	// register server fd to epoll
-	if(epoll_ctl(m_epollFd, EPOLL_CTL_ADD, m_serverFd, &epollEvent) < 0)
-	{
-		fprintf(stderr, "[ERROR] : EPOLL CTL ERROR\n");
-		exit(-1);
-	}
-/*
 	for(int i=0; i<NETWORK_THREAD_NUM; i++)
 	{
 		// Prepare epoll process
@@ -101,9 +85,7 @@ bool NetworkManager::Initialize()
 	{
 		fprintf(stderr, "[ERROR] : EPOLL CTL ERROR\n");
 		exit(-1);
-	}*/
-
-	printf("epoll Create Success\n");
+	}
 
 	return true;
 }
@@ -120,7 +102,7 @@ void NetworkManager::Run()
 
 	for(;;)
 	{
-		numOfEvent = epoll_wait(m_epollFd, m_epollEvents, 100, 2000);
+		numOfEvent = epoll_wait(m_epollFdList[threadId], m_epollEvent2DList[threadId], 100, 2000);
 
 		printf("NW thread %d\n", threadId);
 		if(numOfEvent < 0){	
@@ -135,19 +117,20 @@ void NetworkManager::Run()
 		}
 		
 		//printf("NT %d activated\n", TC);
-		OnEvent(numOfEvent);
+		OnEvent(numOfEvent, threadId);
 	}
 	close(m_serverFd);
-	close(m_epollFd);
+	for(int i=0; i<NETWORK_THREAD_NUM; i++)
+		close(m_epollFdList[i]);
 }
 
-void NetworkManager::OnEvent(int numOfEvent)
+void NetworkManager::OnEvent(int numOfEvent, int threadId)
 {
 	int strLen = 0;
 	char buffer[1024];
 	for(int i=0; i<numOfEvent; i++)
 	{
-		if(m_epollEvents[i].data.fd == m_serverFd) // when clients attempt to connect
+		if(m_epollEvent2DList[threadId][i].data.fd == m_serverFd) // when clients attempt to connect
 		{
 			// accept client
 			// register new client socket to epoll instance
@@ -179,7 +162,7 @@ void NetworkManager::OnEvent(int numOfEvent)
 			epollEvent.data.fd = clientFd;
 
 			// register server fd to epoll
-			if(epoll_ctl(m_epollFd, EPOLL_CTL_ADD, clientFd, &epollEvent) < 0)
+			if(epoll_ctl(m_epollFdList[clientFd%NETWORK_THREAD_NUM], EPOLL_CTL_ADD, clientFd, &epollEvent) < 0)
 			{
 				fprintf(stderr, "[ERROR] : EPOLL CTL ERROR\n");
 				exit(-1);
@@ -189,11 +172,11 @@ void NetworkManager::OnEvent(int numOfEvent)
 		}
 		else	// when client request service
 		{
-			strLen = read(m_epollEvents[i].data.fd, buffer, 1024); // Read client request
+			strLen = read(m_epollEvent2DList[threadId][i].data.fd, buffer, 1024); // Read client request
 			if(strLen == 0)	// Client request to disconnect
 			{
-				epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_epollEvents[i].data.fd, NULL); // remove client info from epoll instance
-				int clientFd = m_epollEvents[i].data.fd;
+				epoll_ctl(m_epollFdList[threadId], EPOLL_CTL_DEL, m_epollEvent2DList[threadId][i].data.fd, NULL); // remove client info from epoll instance
+				int clientFd = m_epollEvent2DList[threadId][i].data.fd;
 				close(clientFd); // disconnecd
 				m_sessionMap.erase(clientFd);
 				printf("%d session disconnected\n", clientFd);
@@ -203,8 +186,8 @@ void NetworkManager::OnEvent(int numOfEvent)
 			}
 			else
 			{
-				int clientFd = m_epollEvents[i].data.fd;
-				__uint32_t events = m_epollEvents[i].events;
+				int clientFd = m_epollEvent2DList[threadId][i].data.fd;
+				__uint32_t events = m_epollEvent2DList[threadId][i].events;
 				if(events & EPOLLIN)
 				{
 					printf("EPOLLIN\n");

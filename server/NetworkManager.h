@@ -17,13 +17,11 @@ public:
 	void Run();
 	
 private:
-	void OnEvent(int numOfEvent);
+	void OnEvent(int numOfEvent, int threadId);
 	void OnRead();
 	int m_serverFd;
-	int m_epollFd;
 	int m_epollFdList[NETWORK_THREAD_NUM];
 	epoll_event* m_epollEvent2DList[NETWORK_THREAD_NUM];
-	epoll_event m_epollEvents[MAX_EVENT_NUM];
 	std::map<int, Session> m_sessionMap;
 };
 
