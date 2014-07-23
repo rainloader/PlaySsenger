@@ -1,12 +1,7 @@
 #include "Member.h"
 
-Member::Member(Session session)
-: m_session(session)
+Member::Member(int sessionId)
+: m_sessionId(sessionId)
 {
-
 }
 
-Session Member::GetSession()
-{
-	return m_session;
-}

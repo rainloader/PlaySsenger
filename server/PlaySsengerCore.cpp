@@ -5,6 +5,8 @@
 
 #include "SpinLock.h"
 
+#define LOGIC_THREAD_NUM 2
+
 int g_threadCount = 0;
 SpinLock g_threadCountLock = SpinLock();
 //-----------------------------------------------------
@@ -30,20 +32,16 @@ bool PlaySsengerCore::Initialize()
 void PlaySsengerCore::Run()
 {
 	pthread_t networkThreadList[MAX_EVENT_NUM];
-	pthread_t logicThreadList[2];
+	pthread_t logicThreadList[LOGIC_THREAD_NUM];
 	for(int i=0; i<NETWORK_THREAD_NUM; i++)
 		pthread_create(&networkThreadList[i], NULL, &PlaySsengerCore::RunNetworkThread, this->m_pNetworkManager);
-	for(int i=0; i<2; i++)
+	for(int i=0; i<LOGIC_THREAD_NUM; i++)
 		pthread_create(&logicThreadList[i], NULL, &PlaySsengerCore::RunLogicThread, this);
 	
 	for(;;)
 	{
 		sleep(1);
 	}
-//	std::thread t1(&PlaySsengerCore::RunNetworkThread, this);
-//	std::thread t2(&PlaySsengerCore::RunNetworkThread, this);
-//	t1.join();
-//	t2.join();
 }
 
 void PlaySsengerCore::MainLogic()

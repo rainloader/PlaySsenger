@@ -23,7 +23,6 @@ private:
 	NetworkManager* m_pNetworkManager;
 	static PlaySsengerCore* m_instance;
 	std::vector<Room> m_roomList;
-	pthread_t m_threadList[4];
 };
 
 #endif

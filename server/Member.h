@@ -7,12 +7,11 @@
 class Member
 {
 public:
-	Member(Session session);
-	Session GetSession();
+	Member(int sessionId);
 
 private:
 	std::string m_id;
-	Session m_session;
+	int m_sessionId;
 };
 
 #endif
