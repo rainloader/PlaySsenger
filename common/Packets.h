@@ -11,10 +11,6 @@
 // ------------------------
 // PDF_START Enum
 //-------------------------
-#undef PDF_START
-#undef PDF_FIELD_ARRAY
-#undef PDF_FIELD_VARRAY
-#undef PDF_END
 #define PDF_START(name) name,
 #define PDF_FIELD(type, name)
 #define PDF_FIELD_ARRAY(type, name, length)
@@ -94,5 +90,11 @@ enum PROTOCOL
 #define PDF_END(name)				return bufferPos;\
 					}		
 #include "PacketDef.h"
+
+#undef PDF_START
+#undef PDF_FIELD_ARRAY
+#undef PDF_FIELD_VARRAY
+#undef PDF_END
+
 
 #endif
