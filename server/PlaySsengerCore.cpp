@@ -55,7 +55,7 @@ void PlaySsengerCore::MainLogic()
 	for(;;)
 	{
 		sleep(1);
-		/**/printf("ML thread %d\n", threadId);
+		//printf("ML thread %d\n", threadId);
 	}
 }
 
