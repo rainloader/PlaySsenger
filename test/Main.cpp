@@ -12,7 +12,7 @@ int main()
 	S_PT_SESSION_U data2;
 	READ_PT_SESSION_U(buffer, data2);
 
-	printf("%d\n", data2.sessionId);	
+	printf("%d\n", (int)data2.sessionId);	
 
 	return 0;
 }
