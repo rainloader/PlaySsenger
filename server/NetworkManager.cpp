@@ -19,7 +19,7 @@ SpinLock g_networkThreadCountLock = SpinLock();
 
 NetworkManager::NetworkManager() : m_serverFd(0)
 {
-	
+
 }
 
 NetworkManager::~NetworkManager()
@@ -38,7 +38,7 @@ bool NetworkManager::Initialize()
 		fprintf(stderr, "[ERROR] : SOCKET ERROR\n");
 		return false;
 	}
-	
+
 	// 2. bind
 	struct sockaddr_in server_addr;
 	bzero((char *) &server_addr, sizeof(server_addr));
@@ -71,7 +71,7 @@ bool NetworkManager::Initialize()
 		}
 
 		m_epollEvent2DList[i] = new epoll_event[MAX_EVENT_NUM];
-		
+
 		printf("epoll Create Success\n");
 	}
 
@@ -110,12 +110,12 @@ void NetworkManager::Run()
 			fprintf(stderr, "[ERROR] epoll_wait() ERROR : %s\n", strerror(errno));
 			exit(1);
 		}
-		
+
 		if(numOfEvent == 0)
 		{
 			continue;
 		}
-		
+
 		//printf("NT %d activated\n", TC);
 		OnEvent(numOfEvent, threadId);
 	}
@@ -133,43 +133,7 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 		int eventFd = m_epollEvent2DList[threadId][i].data.fd;
 		if(eventFd == m_serverFd) // when clients attempt to connect
 		{
-			// accept client
-			// register new client socket to epoll instance
-			int clientFd;
-			sockaddr_in clientAddr;
-			socklen_t addrLen = 0;
-			// #4. accept
-			if((clientFd = accept(m_serverFd, (struct sockaddr*)&clientAddr, &addrLen)) < 0)
-			{
-				fprintf(stderr, "[ERROR] : ACCEPT ERROR\n");
-				exit(-1);
-			}
-			// make socket non-blocking
-			int flags = fcntl(clientFd, F_GETFL, 0);
-			if(flags < 0)
-			{
-				fprintf(stderr, "[ERROR] : MAKE SOCKET NONBLOCKING ERROR\n");
-				exit(-1);
-			}
-			flags = fcntl(clientFd, F_SETFL, flags | O_NONBLOCK);
-
-			Session* pSession = new Session(clientFd, clientAddr);
-			pSession->state = SS_CONNECTED;
-			m_pSessionMap.insert(std::pair<int, Session*>(clientFd, pSession));
-
-			struct epoll_event epollEvent;
-
-			epollEvent.events = EPOLLIN | EPOLLERR; //| EPOLLOUT | EPOLLERR;
-			epollEvent.data.fd = clientFd;
-
-			// register server fd to epoll
-			if(epoll_ctl(m_epollFdList[clientFd%NETWORK_THREAD_NUM], EPOLL_CTL_ADD, clientFd, &epollEvent) < 0)
-			{
-				fprintf(stderr, "[ERROR] : EPOLL CTL ERROR\n");
-				exit(-1);
-			}
-
-			printf("%d session connected\n", clientFd);
+			OnConnect();
 		}
 		else	// when client request service
 		{
@@ -191,7 +155,7 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 				__uint32_t events = m_epollEvent2DList[threadId][i].events;
 				if(events & EPOLLIN)
 				{
-//					OnRead(int id, int strLen);
+					//					OnRead(int id, int strLen);
 				}
 				if(events & EPOLLOUT)
 				{
@@ -211,7 +175,49 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 	}
 }
 
+void NetworkManager::OnConnect()
+{
+	// accept client
+	// register new client socket to epoll instance
+	int clientFd;
+	sockaddr_in clientAddr;
+	socklen_t addrLen = 0;
+	// #4. accept
+	if((clientFd = accept(m_serverFd, (struct sockaddr*)&clientAddr, &addrLen)) < 0)
+	{
+		fprintf(stderr, "[ERROR] : ACCEPT ERROR\n");
+		exit(-1);
+	}
+	// make socket non-blocking
+	int flags = fcntl(clientFd, F_GETFL, 0);
+	if(flags < 0)
+	{
+		fprintf(stderr, "[ERROR] : MAKE SOCKET NONBLOCKING ERROR\n");
+		exit(-1);
+	}
+	flags = fcntl(clientFd, F_SETFL, flags | O_NONBLOCK);
+
+	Session* pSession = new Session(clientFd, clientAddr);
+	pSession->state = SS_CONNECTED;
+	m_pSessionMap.insert(std::pair<int, Session*>(clientFd, pSession));
+
+	struct epoll_event epollEvent;
+
+	epollEvent.events = EPOLLIN | EPOLLERR; //| EPOLLOUT | EPOLLERR;
+	epollEvent.data.fd = clientFd;
+
+	// register server fd to epoll
+	if(epoll_ctl(m_epollFdList[clientFd%NETWORK_THREAD_NUM], EPOLL_CTL_ADD, clientFd, &epollEvent) < 0)
+	{
+		fprintf(stderr, "[ERROR] : EPOLL CTL ERROR\n");
+		exit(-1);
+	}
+
+	printf("%d session connected\n", clientFd);
+
+}
+
 void NetworkManager::OnRead()
 {
-	
+
 }

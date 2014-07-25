@@ -18,6 +18,7 @@ public:
 	
 private:
 	void OnEvent(int numOfEvent, int threadId);
+	void OnConnect();
 	void OnRead();
 	int m_serverFd;
 	int m_epollFdList[NETWORK_THREAD_NUM];
