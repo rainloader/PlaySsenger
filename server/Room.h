@@ -2,6 +2,7 @@
 #define _ROOM_H
 
 #include "Member.h"
+
 #include <map>
 
 class Room

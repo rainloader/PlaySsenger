@@ -1,5 +1,9 @@
 #include "NetworkManager.h"
+
 #include "SpinLock.h"
+#include "../common/Structures.h"
+#include "../common/Packets.h"
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
@@ -212,6 +216,10 @@ void NetworkManager::OnConnect()
 		fprintf(stderr, "[ERROR] : EPOLL CTL ERROR\n");
 		exit(-1);
 	}
+
+	// give session to user
+	Packet writePacket;
+	S_PT_SESSION_U data;
 
 	printf("%d session connected\n", clientFd);
 

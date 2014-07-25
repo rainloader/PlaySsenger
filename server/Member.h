@@ -1,8 +1,9 @@
-#include "Session.h"
-#include <string>
-
 #ifndef _MEMBER_H
 #define _MEMBER_H
+
+#include "Session.h"
+
+#include <string>
 
 class Member
 {
