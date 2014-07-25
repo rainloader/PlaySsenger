@@ -1,11 +1,13 @@
 #ifndef _PACKETS_H
 #define _PACKETS_H
 
+#include "PacketProcessor.h"
+
 #include <string.h>
 
 #define in
 #define out
-#define BYTE unsigned char
+#define BYTE char
 
 #define PacketName(name)	S_##name
 // ------------------------
@@ -24,15 +26,15 @@ enum PROTOCOL
 	PT_MAX
 };
 
-// ------------------------
-// PDF_START Enum
-//-------------------------
 #undef PDF_START
 #undef PDF_FIELD
 #undef PDF_FIELD_ARRAY
 #undef PDF_FIELD_VARRAY
 #undef PDF_END
 
+// ------------------------
+// PDF_START Structure
+//-------------------------
 #define PDF_START(name)				struct PacketName(name) {
 #define PDF_FIELD(type, name)				type name;
 #define PDF_FIELD_ARRAY(type, name, length)		type name[length];
@@ -41,15 +43,16 @@ enum PROTOCOL
 
 #include "PacketDef.h"
 
-// ------------------------
-// PDF_START Read
-//-------------------------
+
 #undef PDF_START
 #undef PDF_FIELD
 #undef PDF_FIELD_ARRAY
 #undef PDF_FIELD_VARRAY
 #undef PDF_END
 
+// ------------------------
+// PDF_START Read
+//-------------------------
 #define PDF_START(name)			inline void READ_##name(in BYTE* buffer, out PacketName(name)& param)\
 					{\
 						unsigned long bufferPos = 0;
@@ -67,15 +70,16 @@ enum PROTOCOL
 
 #include "PacketDef.h"
 
-// ------------------------
-// PDF_START Write Method
-//-------------------------
+
 #undef PDF_START
 #undef PDF_FIELD
 #undef PDF_FIELD_ARRAY
 #undef PDF_FIELD_VARRAY
 #undef PDF_END
 
+// ------------------------
+// PDF_START Write Method
+//-------------------------
 #define PDF_START(name)			inline unsigned int WRITE_##name(out BYTE* buffer, in PacketName(name)& param)\
 					{\
 						unsigned long bufferPos = 0;
@@ -92,9 +96,31 @@ enum PROTOCOL
 #include "PacketDef.h"
 
 #undef PDF_START
+#undef PDF_FIELD
 #undef PDF_FIELD_ARRAY
 #undef PDF_FIELD_VARRAY
 #undef PDF_END
 
+// ------------------------
+// PDF_START Make packet method
+//-------------------------
+#define PDF_START(name)			inline void MAKE_##name(out char* packet, out int& packetSize, in S_##name& data)\
+					{\
+						char packetBody[MAX_PACKET_SIZE];\
+						int packetBodyLength = WRITE_##name(packetBody, data);\
+						packetSize = PacketProcessor::WriteBuffer(name, packet, packetBody, packetBodyLength);\
+					}
+#define PDF_FIELD(type, name)
+#define PDF_FIELD_ARRAY(type, name, length)
+#define PDF_FIELD_VARRAY(type, name)
+#define PDF_END(name)
+
+#include "PacketDef.h"
+
+#undef PDF_START
+#undef PDF_FIELD
+#undef PDF_FIELD_ARRAY
+#undef PDF_FIELD_VARRAY
+#undef PDF_END
 
 #endif

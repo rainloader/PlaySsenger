@@ -20,6 +20,8 @@ private:
 	void OnEvent(int numOfEvent, int threadId);
 	void OnConnect();
 	void OnRead();
+	void TryWrite(int clientFd);
+
 	int m_serverFd;
 	int m_epollFdList[NETWORK_THREAD_NUM];
 	epoll_event* m_epollEvent2DList[NETWORK_THREAD_NUM];

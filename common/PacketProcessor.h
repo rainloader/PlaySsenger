@@ -1,9 +1,7 @@
 #ifndef _PACKETPROCESSOR_H
 #define _PACKETPROCESSOR_H
 
-#include "Packets.h"
-
-#define MAX_PACKET_SIZE 1024
+#include "Structures.h"
 
 class PacketProcessor
 {

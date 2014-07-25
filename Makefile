@@ -18,7 +18,6 @@ common_mod :
 	@echo "----------------------------"
 	@make server_mod
 
-
 server_mod :
 	@echo "----------------------------"
 	@echo "Building Server..."
@@ -37,4 +36,7 @@ test_mod :
 	@echo "----------------------------"
 
 clean:
+	@cd $(COMMON); make clean
+	@cd $(SERVER); make clean
+	@cd $(TEST); make clean
 	@echo "Clean"

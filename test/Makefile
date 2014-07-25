@@ -3,3 +3,5 @@ main : Main.o
 main.o : main.cpp
 	g++ -c Main.cpp
 
+clean:
+	rm Main.o

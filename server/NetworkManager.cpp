@@ -220,6 +220,9 @@ void NetworkManager::OnConnect()
 	// give session to user
 	Packet writePacket;
 	S_PT_SESSION_U data;
+	data.sessionId = clientFd;
+	MAKE_PT_SESSION_U(writePacket.buffer, writePacket.size, data);
+	
 
 	printf("%d session connected\n", clientFd);
 
