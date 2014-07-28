@@ -8,10 +8,11 @@ public:
 	void Initialize();
 	void Connect();
 	void ReadAndDispatch();
-	void WritePacket(Packet packet);
 
 private:
 	int sessionId;
 	int socketFd;
 	
 };
+
+#endif

@@ -1,1 +1,1 @@
-./client/main
+./client/psc_run
