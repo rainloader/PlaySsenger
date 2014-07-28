@@ -108,7 +108,7 @@ void NetworkManager::Run()
 	{
 		numOfEvent = epoll_wait(m_epollFdList[threadId], m_epollEvent2DList[threadId], 100, 2000);
 
-		printf("NW thread %d\n", threadId);
+		//printf("NW thread %d\n", threadId);
 		if(numOfEvent < 0){	
 			// critical error
 			fprintf(stderr, "[ERROR] epoll_wait() ERROR : %s\n", strerror(errno));
@@ -153,6 +153,12 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 			}
 			else if(strLen < 0)
 			{
+	/*			if(errno != EWOULDBLOCK && errno != EAGAIN)
+				{
+					// critical error
+					fprintf(stderr, "[ERROR] read() ERROR : %s\n", strerror(errno));
+					exit(1);
+				}*/
 			}
 			else
 			{
@@ -222,7 +228,8 @@ void NetworkManager::OnConnect()
 	S_PT_SESSION_U data;
 	data.sessionId = clientFd;
 	MAKE_PT_SESSION_U(writePacket.buffer, writePacket.size, data);
-	
+
+	TryWrite(clientFd, writePacket);
 
 	printf("%d session connected\n", clientFd);
 
@@ -231,4 +238,15 @@ void NetworkManager::OnConnect()
 void NetworkManager::OnRead()
 {
 
+}
+
+void NetworkManager::TryWrite(int clientFd, const Packet& packet)
+{
+	int result = write(clientFd, packet.buffer, packet.size);
+	if(result < 0 && errno != EWOULDBLOCK && errno != EAGAIN)
+	{
+		// critical error
+		fprintf(stderr, "[ERROR] write() ERROR : %s\n", strerror(errno));
+		exit(1);
+	}
 }

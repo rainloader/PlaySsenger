@@ -73,18 +73,8 @@ bool PacketProcessor::FetchPacket(int& protocol, char* packet, int& packetBodyLe
 int PacketProcessor::WriteBuffer(const int& protocol, char* packetBuffer, char* packet, const int& packetBodyLength)
 {
 	int packetSize = sizeof(int)/*LENGTH*/ + sizeof(int)/*PROTOCOL*/ + packetBodyLength;
-	memcpy(packetBuffer, &packetSize, sizeof(int));
-	
-	if(memcpy(packetBuffer + sizeof(int)/*LENGTH*/, &protocol, sizeof(int)) != 0)
-	{
-		fprintf(stderr, "[ERROR] mem cpy error\n");
-	}
-
-	if(memcpy(packetBuffer + sizeof(int)/*LENGTH*/ + sizeof(int)/*PROTOCOL*/, packet, packetBodyLength) != 0)
-	{
-		fprintf(stderr, "[ERROR] mem cpy error\n");
-	}
-
-
+	memcpy(packetBuffer, &packetSize, sizeof(int));	
+	memcpy(packetBuffer + sizeof(int)/*LENGTH*/, &protocol, sizeof(int));
+	memcpy(packetBuffer + sizeof(int)/*LENGTH*/ + sizeof(int)/*PROTOCOL*/, packet, packetBodyLength);
 	return packetSize;
 }

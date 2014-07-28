@@ -12,7 +12,7 @@ SpinLock g_threadCountLock = SpinLock();
 //-----------------------------------------------------
 // initialize static variable
 PlaySsengerCore* PlaySsengerCore::m_instance = 0;
-	
+
 PlaySsengerCore* PlaySsengerCore::GetInstance()
 {
 	if(!m_instance)
@@ -37,7 +37,7 @@ void PlaySsengerCore::Run()
 		pthread_create(&networkThreadList[i], NULL, &PlaySsengerCore::RunNetworkThread, this->m_pNetworkManager);
 	for(int i=0; i<LOGIC_THREAD_NUM; i++)
 		pthread_create(&logicThreadList[i], NULL, &PlaySsengerCore::RunLogicThread, this);
-	
+
 	for(;;)
 	{
 		sleep(1);

@@ -4,6 +4,7 @@
 #include "PacketProcessor.h"
 
 #include <string.h>
+#include <stdio.h>
 
 #define in
 #define out

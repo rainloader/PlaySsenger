@@ -15,20 +15,20 @@ int main()
 	serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	//serverAddr.sin_addr.s_addr = inet_addr("165.132.121.42");
 	serverAddr.sin_port = htons(7554);
-	
+
 	if((clientSocket = socket(PF_INET, SOCK_STREAM, 0))<0)
 	{
 		fprintf(stderr, "[ERROR] : SOCKET ERROR\n");
 		return -1;
 	}
-	
+
 	if(connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0)
 	{
 		fprintf(stderr, "[ERROR] : CONNECT ERROR\n");
 		return -1;
 	}
 	printf("connected\n");
-	
+
 	int result = 0;
 	char strBuffer[1024];
 	for(;;)
@@ -41,24 +41,12 @@ int main()
 			fprintf(stderr, "[ERROR] : WRITE ERROR\n");
 		}
 		else
-	{
-		printf("%d sended!\n", result);
+		{
+			printf("%d sended!\n", result);
+		}
+		if(strcmp(strBuffer, "exit") == 0)
+			break;
 	}
-	
-	}
-	getchar();
-
-	char* buffer = "I`m sending message!\n";
-	if((result = write(clientSocket, buffer, 21)) < 0)
-	{
-		fprintf(stderr, "[ERROR] : WRITE ERROR\n");
-	}
-	else
-	{
-		printf("%d sended!\n", result);
-	}	
-
-	getchar();
 
 	if(close(clientSocket) < 0)
 	{
