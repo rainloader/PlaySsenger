@@ -15,8 +15,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define PORT_NUM 7554
-
 int g_networkThreadCount = 0;
 SpinLock g_networkThreadCountLock = SpinLock();
 
