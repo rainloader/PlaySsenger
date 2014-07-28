@@ -125,3 +125,25 @@ enum PROTOCOL
 #undef PDF_END
 
 #endif
+
+// ------------------------
+// Packet Dispatch Handler Stub Generator
+//-------------------------
+#define HANDLE(name)\
+	void DispatchPacket_##name(char* bytes, int length);\
+	void Handle_##name(const S_##name& packet);\
+	static struct RegisterDispatchPacket_##name\
+	{\
+		RegisterDispatchPacket_##name()\
+		{\
+			g_handlerTable[##name] = DispatchPacket_##name;\
+		}\
+	} __register_DispatchPacket_##name;\
+	void DispatchPacket_##name(char* bytes, int length)\
+	{\
+		S_##name packet;\
+		READ_##name(bytes, packet);\
+		Handle_##name(packet);\
+	}\
+	void Handle_##name(const S_##name& packet)
+
