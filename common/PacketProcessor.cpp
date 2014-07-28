@@ -29,11 +29,8 @@ bool PacketProcessor::FetchPacket(int& protocol, char* packet, int& packetBodyLe
 		return false;
 	}
 
-	if(memcpy(&packetSize, packetBuffer, sizeof(int)) != 0)
-	{
-		fprintf(stderr, "[ERROR] mem cpy error\n");
-		exit(-1);
-	}
+	memcpy(&packetSize, packetBuffer, sizeof(int));
+	
 	if(packetSize >= MAX_PACKET_SIZE || packetSize <= 0)
 	{
 		fprintf(stderr, "[ERROR] invalid packet\n");
@@ -46,10 +43,7 @@ bool PacketProcessor::FetchPacket(int& protocol, char* packet, int& packetBodyLe
 
 		packetBodyLength = packetSize - sizeof(int)/*LENGTH*/ - sizeof(int)/*PROTOCOL*/;
 
-		if(memcpy(packet, packetBuffer + sizeof(int)/*LENGTH*/ + sizeof(int)/*PROTOCOL*/, packetBodyLength) != 0)
-		{
-			fprintf(stderr, "[ERROR] mem cpy error\n");
-		}
+		memcpy(packet, packetBuffer + sizeof(int)/*LENGTH*/ + sizeof(int)/*PROTOCOL*/, packetBodyLength);
 
 		if(idxPacket - packetSize > 0)
 		{

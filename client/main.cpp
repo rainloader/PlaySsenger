@@ -1,3 +1,7 @@
+#include "../common/Packets.h"
+#include "../common/Structures.h"
+#include "../common/PacketProcessor.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <netinet/in.h>
@@ -8,6 +12,7 @@
 
 int main()
 {
+	int sessionId;
 	int clientSocket;
 	struct sockaddr_in serverAddr;
 	bzero((char *) &serverAddr, sizeof(serverAddr));
@@ -29,8 +34,35 @@ int main()
 	}
 	printf("connected\n");
 
-	int result = 0;
+	int result = 0; 
 	char strBuffer[1024];
+	/*read sesion packet*/
+	char packetBuffer[1024];
+	char readBuffer[1024];
+	int protocol;
+	int packetBodyLength;
+	int idxPacket = 0;
+
+	result = read(clientSocket, readBuffer, 1024);
+	
+	Packet packet;
+	PacketProcessor::ReadBuffer(idxPacket, packetBuffer, readBuffer, result);
+	
+	while(PacketProcessor::FetchPacket(protocol, packet.buffer, packetBodyLength, idxPacket, packetBuffer))
+	{
+		if(0 <= protocol && protocol < PT_MAX)
+		{
+			if(protocol == PT_SESSION_U)
+			{
+				S_PT_SESSION_U structSession;
+				READ_PT_SESSION_U(packet.buffer, structSession);
+				sessionId = structSession.sessionId;
+			}
+		}
+	}
+
+	printf("my session id is %d\n", sessionId);
+
 	for(;;)
 	{
 		bzero(strBuffer, 1024);
