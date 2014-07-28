@@ -1,1 +1,1 @@
-./server/testClient/main
+./client/main
