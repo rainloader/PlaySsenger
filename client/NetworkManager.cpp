@@ -13,6 +13,15 @@
 
 #define SERVER_ADDRESS "127.0.0.1"
 
+NetworkManager* NetworkManager::sm_instance = NULL;
+
+NetworkManager& NetworkManager::GetInstance()
+{
+	if(sm_instance == NULL)
+		sm_instance = new NetworkManager();
+	return *sm_instance;
+}
+
 void NetworkManager::Initialize()
 {        
 	if((socketFd = socket(PF_INET, SOCK_STREAM, 0))<0)

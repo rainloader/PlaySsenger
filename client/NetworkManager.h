@@ -6,9 +6,12 @@
 class NetworkManager
 {
 public:
+	static NetworkManager& GetInstance();
 	void Initialize();
 	bool Connect();
 	void ReadAndDispatch();
+	int GetSessionId() { return this->sessionId; }
+	void SetSessionId(int sessionId) { this->sessionId = sessionId; }
 
 private:
 	int sessionId;
@@ -16,6 +19,8 @@ private:
 	char packetBuffer[MAX_PACKET_SIZE];
 	char readBuffer[MAX_BUFFER_LENGTH];
 	int idxPacket;
+
+	static NetworkManager* sm_instance;
 };
 
 #endif

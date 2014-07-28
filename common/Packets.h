@@ -136,7 +136,7 @@ enum PROTOCOL
 	{\
 		RegisterDispatchPacket_##name()\
 		{\
-			g_handlerTable[##name] = DispatchPacket_##name;\
+			g_handlerTable[name] = DispatchPacket_##name;\
 		}\
 	} __register_DispatchPacket_##name;\
 	void DispatchPacket_##name(char* bytes, int length)\
