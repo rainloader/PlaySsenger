@@ -1,3 +1,5 @@
+#include "NetworkManager.h"
+
 #include "../common/Packets.h"
 #include "../common/Structures.h"
 #include "../common/PacketProcessor.h"
@@ -12,6 +14,12 @@
 
 int main()
 {
+	NetworkManager& nm = NetworkManager::GetInstance();
+	nm.Initialize();
+	nm.Connect();
+for(;;)
+	nm.ReadAndDispatch();
+/*
 	int sessionId;
 	int clientSocket;
 	struct sockaddr_in serverAddr;
@@ -36,7 +44,6 @@ int main()
 
 	int result = 0; 
 	char strBuffer[1024];
-	/*read sesion packet*/
 	char packetBuffer[1024];
 	char readBuffer[1024];
 	int protocol;
@@ -84,6 +91,6 @@ int main()
 	{
 		fprintf(stderr, "[ERROR] : CLOSE ERROR\n");
 		return -1;
-	}
+	}*/
 	return 0;
 }

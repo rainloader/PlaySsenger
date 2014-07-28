@@ -2,6 +2,7 @@
 #include "../common/Structures.h"
 #include "../common/PacketProcessor.h"
 #include "../common/Packets.h"
+#include "PacketDispatcher.h"
 
 #include <strings.h>
 #include <stdio.h>
@@ -45,7 +46,7 @@ bool NetworkManager::Connect()
 		fprintf(stderr, "[ERROR] : CONNECT ERROR\n");
 		return false;
 	}
-	printf("Connected");
+	printf("Connected\n");
 	return true;
 }
 
@@ -63,7 +64,7 @@ void NetworkManager::ReadAndDispatch()
 	{
 		if(0 <= protocol && protocol < PT_MAX)
 		{
-			
+			g_handlerTable[protocol](packet.buffer, packetBodyLength);
 		}
 	}
 }
