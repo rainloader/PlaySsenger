@@ -1,3 +1,5 @@
+#include "ClientCore.h"
+
 #include "NetworkManager.h"
 
 #include "../common/Packets.h"
@@ -14,6 +16,9 @@
 
 int main()
 {
+	//ClientCore& clientCore = ClientCore::GetInstance();
+//	clientCore.Run();
+
 	NetworkManager& nm = NetworkManager::GetInstance();
 	nm.Initialize();
 	nm.Connect();

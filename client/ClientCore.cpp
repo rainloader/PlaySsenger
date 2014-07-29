@@ -13,4 +13,14 @@ ClientCore& ClientCore::GetInstance()
 
 void ClientCore::Run()
 {
+	m_networkManager.Initialize();
+	m_networkManager.Connect();
+
+	for(;;)
+		m_networkManager.ReadAndDispatch();
+}
+
+ClientCore::ClientCore()
+{
+	m_networkManager = NetworkManager::GetInstance();
 }
