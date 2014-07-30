@@ -12,13 +12,13 @@ public:
 	static PlaySsengerCore& GetInstance();
 	bool Initialize();
 	void Run();
-	void MainLogic();
 	void CleanUp();
 	static void* RunNetworkThread(void* context);
 	static void* RunLogicThread(void* context);
 
 private:
 	PlaySsengerCore();
+	void MainLogic();
 
 	NetworkManager* m_pNetworkManager;
 	static PlaySsengerCore* sm_instance;
