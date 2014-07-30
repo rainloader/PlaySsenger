@@ -16,9 +16,9 @@
 
 int main()
 {
-	//ClientCore& clientCore = ClientCore::GetInstance();
-//	clientCore.Run();
-
+	ClientCore& clientCore = ClientCore::GetInstance();
+	clientCore.Run();
+/*
 	NetworkManager& nm = NetworkManager::GetInstance();
 	nm.Initialize();
 	nm.Connect();

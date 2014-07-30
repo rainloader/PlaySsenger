@@ -1,5 +1,6 @@
 #include "ClientCore.h"
 
+#include <pthread.h>
 #include <stdio.h>
 
 ClientCore* ClientCore::sm_instance = NULL;
@@ -15,6 +16,9 @@ void ClientCore::Run()
 {
 	m_networkManager.Initialize();
 	m_networkManager.Connect();
+
+	pthread_t writeThread;
+	pthread_t readThread;
 
 	for(;;)
 		m_networkManager.ReadAndDispatch();

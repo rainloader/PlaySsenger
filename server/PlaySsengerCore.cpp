@@ -11,15 +11,15 @@ int g_threadCount = 0;
 SpinLock g_threadCountLock = SpinLock();
 //-----------------------------------------------------
 // initialize static variable
-PlaySsengerCore* PlaySsengerCore::m_instance = 0;
+PlaySsengerCore* PlaySsengerCore::sm_instance = 0;
 
-PlaySsengerCore* PlaySsengerCore::GetInstance()
+PlaySsengerCore& PlaySsengerCore::GetInstance()
 {
-	if(!m_instance)
+	if(!sm_instance)
 	{
-		m_instance = new PlaySsengerCore();
+		sm_instance = new PlaySsengerCore();
 	}
-	return m_instance;
+	return *sm_instance;
 }
 
 bool PlaySsengerCore::Initialize()
@@ -82,7 +82,7 @@ PlaySsengerCore::PlaySsengerCore() : m_pNetworkManager(0)
 
 PlaySsengerCore::~PlaySsengerCore()
 {
-	if(m_instance)
-		delete m_instance;
+	if(sm_instance)
+		delete sm_instance;
 }
 

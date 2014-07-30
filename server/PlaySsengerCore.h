@@ -8,7 +8,8 @@
 class PlaySsengerCore
 {
 public:
-	static PlaySsengerCore* GetInstance();
+	~PlaySsengerCore();
+	static PlaySsengerCore& GetInstance();
 	bool Initialize();
 	void Run();
 	void MainLogic();
@@ -18,10 +19,9 @@ public:
 
 private:
 	PlaySsengerCore();
-	~PlaySsengerCore();
 
 	NetworkManager* m_pNetworkManager;
-	static PlaySsengerCore* m_instance;
+	static PlaySsengerCore* sm_instance;
 	std::vector<Room> m_roomList;
 };
 

@@ -3,14 +3,14 @@
 
 int main()
 {
-	PlaySsengerCore* pCore = PlaySsengerCore::GetInstance();
+	PlaySsengerCore serverCore = PlaySsengerCore::GetInstance();
 
-	if(pCore->Initialize())
+	if(serverCore.Initialize())
 	{
-		pCore->Run();
+		serverCore.Run();
 	}
 
-	pCore->CleanUp();
+	serverCore.CleanUp();
 
 	std::cout << "PlaySsenger Terminated." << std::endl;
 	return 0;
