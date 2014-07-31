@@ -69,3 +69,7 @@ void NetworkManager::ReadAndDispatch()
 	}
 }
 
+void NetworkManager::SendMessage(char* message, int strlen)
+{
+	
+}

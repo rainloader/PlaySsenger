@@ -59,6 +59,7 @@ void ClientCore::RunLogic()
 		int length = strlen(consoleInputBuffer);
 		if(strcmp(consoleInputBuffer, "exit") == 0)
 			break;
+		m_networkManager.SendMessage(consoleInputBuffer, length);
 	}
 	printf("wait....\n");
 	m_exitFlag = true;
