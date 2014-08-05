@@ -10,6 +10,7 @@ public:
 	void Initialize();
 	bool Connect();
 	void ReadAndDispatch();
+	void Write(const Packet& packet);
 	void SendMessage(char* message, int strlen);
 	int GetSessionId() { return this->sessionId; }
 	void SetSessionId(int sessionId) { this->sessionId = sessionId; }

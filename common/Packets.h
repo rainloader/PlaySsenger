@@ -5,6 +5,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <vector>
 
 #define in
 #define out
@@ -88,7 +89,8 @@ enum PROTOCOL
 						bufferPos += sizeof(type);
 #define PDF_FIELD_ARRAY(type, name, length)	memcpy(buffer, param.name, length * sizeof(type));\
 						bufferPos += length * sizeof(type);
-#define PDF_FIELD_VARRAY(type, name)		memcpy(buffer + bufferPos, &param.name.size(), sizeof(int));\
+#define PDF_FIELD_VARRAY(type, name)		int name##size = param.name.size();\
+						memcpy(buffer + bufferPos, &name##size, sizeof(int));\
 						bufferPos += sizeof(int);\
 						memcpy(buffer + bufferPos, &param.name[0], param.name.size());\
 						bufferPos += name##size * sizeof(type);

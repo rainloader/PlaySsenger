@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <errno.h>
 
 #define SERVER_ADDRESS "127.0.0.1"
 
@@ -69,7 +70,25 @@ void NetworkManager::ReadAndDispatch()
 	}
 }
 
+void NetworkManager::Write(const Packet& packet)
+{
+	int result = write(socketFd, packet.buffer, packet.size);
+	if(result < 0)
+	{
+		fprintf(stderr, "[ERROR] write() ERROR : %s\n", strerror(errno));
+		exit(1);
+	}
+}
+
 void NetworkManager::SendMessage(char* message, int strlen)
 {
-	
+	Packet packet;
+	char packetBuffer[MAX_PACKET_SIZE];
+	int packetSize;
+	S_PT_MESSAGE data;
+	data.message.reserve(strlen);
+	data.message.assign(message, message + strlen);
+	MAKE_PT_MESSAGE(packet.buffer, packet.size, data);
+	Write(packet);
 }
+
