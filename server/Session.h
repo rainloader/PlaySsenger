@@ -15,7 +15,9 @@ struct Session
 	Session(int sessionId, sockaddr_in addr);
 	SessionState state;
 	int sessionId;	// session id equals to socket fd.
-	unsigned char buffer[MAX_BUFFER_LENGTH];
+	char buffer[MAX_BUFFER_LENGTH];
+	char packetBuffer[MAX_PACKET_SIZE];
+	int idxPacket;
 	sockaddr_in addr;	// socket addr
 };
 

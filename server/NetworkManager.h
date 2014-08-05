@@ -19,7 +19,7 @@ class NetworkManager
 	private:
 		void OnEvent(int numOfEvent, int threadId);
 		void OnConnect();
-		void OnRead();
+		void OnRead(int clientFd, int length);
 		void TryWrite(int clientFd, const Packet& packet);
 
 		int m_serverFd;

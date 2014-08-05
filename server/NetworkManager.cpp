@@ -1,6 +1,7 @@
 #include "NetworkManager.h"
 
 #include "SpinLock.h"
+#include "PacketDispatcher.h"
 #include "../common/Structures.h"
 #include "../common/Packets.h"
 
@@ -162,8 +163,7 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 				__uint32_t events = m_epollEvent2DList[threadId][i].events;
 				if(events & EPOLLIN)
 				{
-					OnRead(eventFd);
-					//					OnRead(int id, int strLen);
+					OnRead(eventFd, strLen);
 				}
 				if(events & EPOLLOUT)
 				{
@@ -233,9 +233,22 @@ void NetworkManager::OnConnect()
 
 }
 
-void NetworkManager::OnRead()
+void NetworkManager::OnRead(int clientFd, int length)
 {
-
+	
+	Session* pSession = m_pSessionMap[clientFd];
+	
+	PacketProcessor::ReadBuffer(pSession->idxPacket, pSession->packetBuffer, pSession->buffer, length);
+	int protocol;
+	Packet packet;
+	int packetBodyLength;
+	while(PacketProcessor::FetchPacket(protocol, packet.buffer, packetBodyLength, pSession->idxPacket, pSession->packetBuffer))
+	{
+		if(0<=protocol && protocol <= PT_MAX)
+		{
+			g_handlerTable[protocol](packet.buffer, packetBodyLength);
+		}
+	}
 }
 
 void NetworkManager::TryWrite(int clientFd, const Packet& packet)
