@@ -66,7 +66,7 @@ enum PROTOCOL
 						memcpy(&name##size, buffer + bufferPos, sizeof(int));\
 						bufferPos += sizeof(int);\
 						param.name.resize(name##size);\
-						memcpy(&param.name[0], buffer + bufferPos, param.name.size() * sizeof(type));\
+						memcpy(&param.name[0], buffer + bufferPos, param.name.size() * sizeof(param.name[0]));\
 						bufferPos += name##size * sizeof(type);
 #define PDF_END(name)			}
 

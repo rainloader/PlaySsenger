@@ -9,3 +9,5 @@ client/psc_run
 server/pss_run
 
 test/Main
+
+server/pss_run

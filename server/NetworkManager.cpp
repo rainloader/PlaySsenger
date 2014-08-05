@@ -162,6 +162,7 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 				__uint32_t events = m_epollEvent2DList[threadId][i].events;
 				if(events & EPOLLIN)
 				{
+					OnRead(eventFd);
 					//					OnRead(int id, int strLen);
 				}
 				if(events & EPOLLOUT)
@@ -173,8 +174,8 @@ void NetworkManager::OnEvent(int numOfEvent, int threadId)
 					fprintf(stderr, "[ERROR] : EPOLL EVENT ERROR\n");
 					exit(-1);				
 				}
-				pSession->buffer[strLen] = '\0';
-				printf("%s\n", pSession->buffer);
+				//pSession->buffer[strLen] = '\0';
+				//printf("%s\n", pSession->buffer);
 
 				// service that someelse
 			}
