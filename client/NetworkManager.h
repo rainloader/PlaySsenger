@@ -12,15 +12,15 @@ public:
 	void ReadAndDispatch();
 	void Write(const Packet& packet);
 	void SendMessage(char* message, int strlen);
-	int GetSessionId() { return this->sessionId; }
-	void SetSessionId(int sessionId) { this->sessionId = sessionId; }
+	int GetSessionId() { return this->m_sessionId; }
+	void SetSessionId(int sessionId) { this->m_sessionId = sessionId; }
 
 private:
-	int sessionId;
-	int socketFd;
-	char packetBuffer[MAX_PACKET_SIZE];
-	char readBuffer[MAX_BUFFER_LENGTH];
-	int idxPacket;
+	int m_sessionId;
+	int m_socketFd;
+	char m_packetBuffer[MAX_PACKET_SIZE];
+	char m_readBuffer[MAX_BUFFER_LENGTH];
+	int m_idxPacket;
 
 	static NetworkManager* sm_instance;
 };

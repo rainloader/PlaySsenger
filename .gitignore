@@ -4,3 +4,8 @@ server/pss_run
 test/Main
 client/psc_run
 client/psc_run
+client/psc_run
+
+server/pss_run
+
+test/Main
