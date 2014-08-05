@@ -92,8 +92,8 @@ enum PROTOCOL
 #define PDF_FIELD_VARRAY(type, name)		int name##size = param.name.size();\
 						memcpy(buffer + bufferPos, &name##size, sizeof(int));\
 						bufferPos += sizeof(int);\
-						memcpy(buffer + bufferPos, &param.name[0], param.name.size());\
-						bufferPos += name##size * sizeof(type);
+						memcpy(buffer + bufferPos, &param.name[0], param.name.size() * sizeof(param.name[0]));\
+						bufferPos += name##size * sizeof(param.name[0]);
 #define PDF_END(name)				return bufferPos;\
 					}		
 #include "PacketDef.h"
