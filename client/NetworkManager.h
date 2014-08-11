@@ -16,6 +16,8 @@ public:
 	void SetSessionId(int sessionId) { this->m_sessionId = sessionId; }
 
 private:
+	NetworkManager();
+
 	int m_sessionId;
 	int m_socketFd;
 	char m_packetBuffer[MAX_PACKET_SIZE];

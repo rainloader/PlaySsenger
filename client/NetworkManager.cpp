@@ -90,12 +90,10 @@ void NetworkManager::SendMessage(char* message, int strlen)
 	data.message.resize(strlen);
 	data.message.assign(message, message + strlen);
 	MAKE_PT_MESSAGE(packet.buffer, packet.size, data);
-	printf("%s %d\n", message, strlen);
-	for(int i=0; i<packet.size; i++)
-	{
-		printf("%c", packet.buffer[i]);
-	}
-	printf("%s %d\n", packet.buffer, packet.size);
 	Write(packet);
 }
 
+NetworkManager::NetworkManager()
+: m_sessionId(-1)
+{
+}

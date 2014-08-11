@@ -66,7 +66,7 @@ void ClientCore::RunLogic()
 }
 
 ClientCore::ClientCore()
+: m_networkManager(NetworkManager::GetInstance())
 {
-	m_networkManager = NetworkManager::GetInstance();
 	m_exitFlag = false;
 }

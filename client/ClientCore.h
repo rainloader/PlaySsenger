@@ -15,7 +15,7 @@ class ClientCore
 		ClientCore();
 		void RunLogic();
 		static ClientCore* sm_instance;
-		NetworkManager m_networkManager;
+		NetworkManager& m_networkManager;
 		bool m_exitFlag;
 };
 
