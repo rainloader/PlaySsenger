@@ -31,9 +31,6 @@ void ClientCore::Run()
 	{
 		sleep(2);
 	}
-
-//	for(;;)
-//		m_networkManager.ReadAndDispatch();
 }
 
 void* ClientCore::RunReadThread(void* context)
@@ -52,6 +49,31 @@ void* ClientCore::RunLogicThread(void* context)
 void ClientCore::RunLogic()
 {
 	char consoleInputBuffer[CONSOLE_BUFFER_LENGTH];
+
+
+	char choice;
+	// read id first
+	while(choice != 'l' && choice != 'j')
+	{
+		printf("Login(l), Join(j), exit(e)\n");
+		scanf("%c", &choice);
+	
+		switch(choice)
+		{
+			case 'l':
+				break;
+			case 'j':
+				break;
+			case 'e':
+				printf("wait....\n");
+				m_exitFlag = true;
+				return;
+			default:
+				break;
+		}
+		getchar();
+	}
+
 	for(;;)
 	{
 		bzero(consoleInputBuffer, CONSOLE_BUFFER_LENGTH);
